@@ -32,17 +32,6 @@ Full details: [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md)
 
 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) covers the player manager, dirty-tracking save pipeline, differential sync, and storage layer. [`docs/AUDIT-qbox.md`](docs/AUDIT-qbox.md) is our public teardown of QBox v1.24.0 — the baseline we're beating.
 
-## Roadmap
-
-- [x] Architecture design + QBox performance audit
-- [ ] Player manager with dirty tracking
-- [ ] Coalesced save scheduler
-- [ ] Differential client sync
-- [ ] Normalized hot-column schema (cash, bank, position)
-- [ ] QBox/QBCore compatibility bridge (opt-in)
-- [ ] Benchmark harness vs QBox baseline
-- [ ] `v1.0` — production-ready core
-
 ## Install
 
 Not yet — wait for `v1.0`. When it's ready:
