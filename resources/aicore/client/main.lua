@@ -6,6 +6,10 @@
 
 local playerState = LocalPlayer.state
 
+-- Latest login payload, served to the GetPlayerData export.
+local playerDataCache = nil
+exports('GetPlayerData', function() return playerDataCache end)
+
 -- Differential player-data sync: the server sends only the key that changed.
 RegisterNetEvent('aicore:client:onPlayerData', function(field, value)
     -- Handled by feature resources; core only routes.
@@ -31,6 +35,9 @@ AddStateBagChangeHandler('vitals', 'player:' .. GetPlayerServerId(PlayerId()),
 RegisterNetEvent('aicore:client:onPlayerLoaded', function(data)
     DoScreenFadeOut(500)
     while not IsScreenFadedOut() do Wait(100) end
+
+    -- Keep the latest payload for the GetPlayerData export.
+    playerDataCache = data
 
     local pos = data.position or Config.defaultSpawn
     local ped = PlayerPedId()

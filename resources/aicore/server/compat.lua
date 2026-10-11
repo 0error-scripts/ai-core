@@ -273,3 +273,49 @@ function AICore.GetWeapons()
 end
 
 exports('GetWeapons', AICore.GetWeapons)
+
+---QB-shaped PlayerData for a source (server-side).
+---@param source Source
+---@return table?
+function AICore.GetPlayerData(source)
+    local player = AICore.GetPlayer(source)
+    return player and player.PlayerData or nil
+end
+
+exports('GetPlayerData', AICore.GetPlayerData)
+
+---Vehicle type lookup with a self-populating cache (used by aicore.spawnVehicle).
+---@param hash integer|string model hash or name
+---@return {type:string}
+function AICore.GetVehiclesByHash(hash)
+    local model = type(hash) == 'string' and joaat(hash) or hash
+    AICore._vehicleTypeCache = AICore._vehicleTypeCache or {}
+    if not AICore._vehicleTypeCache[model] then
+        local temp = CreateVehicle(model, 0, 0, -200, 0, true, true)
+        local tries = 0
+        while not DoesEntityExist(temp) and tries < 50 do Wait(0) tries += 1 end
+        AICore._vehicleTypeCache[model] =
+            DoesEntityExist(temp) and GetVehicleType(temp) or 'automobile'
+        if DoesEntityExist(temp) then DeleteEntity(temp) end
+    end
+    return { type = AICore._vehicleTypeCache[model] }
+end
+
+exports('GetVehiclesByHash', AICore.GetVehiclesByHash)
+
+---@param entity integer
+---@param bucket integer
+function AICore.SetEntityBucket(entity, bucket)
+    SetEntityRoutingBucket(entity, bucket)
+end
+
+exports('SetEntityBucket', AICore.SetEntityBucket)
+
+---No-op: Aicore does not do vehicle persistence (dirty-tracked player saves
+---only). Kept so ported resources don't error.
+---@return boolean
+function AICore.EnablePersistence()
+    return true
+end
+
+exports('EnablePersistence', AICore.EnablePersistence)

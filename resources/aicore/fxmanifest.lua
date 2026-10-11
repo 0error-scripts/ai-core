@@ -36,6 +36,7 @@ server_scripts {
 
 files {
     'locales/*.json',
+    'modules/*.lua',
 }
 
 dependencies {

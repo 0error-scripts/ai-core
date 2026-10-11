@@ -46,15 +46,33 @@ function AICore.Login(source, citizenid)
     AICore.AttachCompatShape(player, entity.name or citizenid)
     Player(source).state:set('isLoggedIn', true, true)
 
+    local jobDef = AICore.Jobs[player.data.job.name] or {}
+    local jobGrade = (jobDef.grades or {})[player.data.job.grade or 0] or {}
+    local gangDef = AICore.Gangs[player.data.gang.name] or {}
+    local gangGrade = (gangDef.grades or {})[player.data.gang.grade or 0] or {}
+    local first, last = (entity.name or ''):match('^(%S+)%s+(.-)%s*$')
+
     TriggerClientEvent('aicore:client:onPlayerLoaded', source, {
         citizenid = citizenid,
+        name = entity.name,
+        charinfo = { firstname = first or entity.name, lastname = last or '' },
         cash = player.data.cash,
         bank = player.data.bank,
         position = player.data.position,
         vitals = player:GetVitals(),
         metadata = player.data.metadata,
-        job = player.data.job,
-        gang = player.data.gang,
+        job = {
+            name = player.data.job.name,
+            label = jobDef.label or player.data.job.name,
+            type = jobDef.type or 'none',
+            onduty = player.data.job.onduty or false,
+            grade = { name = jobGrade.name or '', level = player.data.job.grade or 0 },
+        },
+        gang = {
+            name = player.data.gang.name,
+            label = gangDef.label or player.data.gang.name,
+            grade = { name = gangGrade.name or '', level = player.data.gang.grade or 0 },
+        },
     })
     TriggerEvent('aicore:server:onPlayerLoaded', source)
 
