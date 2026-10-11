@@ -26,3 +26,12 @@ Config.hotMoneyTypes = { 'cash', 'bank' }
 -- State-bag strict mode expectation: clients must never write state.
 -- Enforce in server.cfg: `setr sv_stateBagStrictMode true`
 Config.expectStateBagStrictMode = true
+
+-- Where first-time players spawn (vec4).
+Config.defaultSpawn = vec4(-1035.0, -2739.0, 20.0, 0.0)
+
+-- Paycheck settings.
+Config.paycheck = {
+    enabled = true,
+    intervalMinutes = 30,
+}

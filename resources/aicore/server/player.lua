@@ -66,6 +66,80 @@ function PlayerMethods:IsDirty()
     return next(self.dirty) ~= nil
 end
 
+---@param amount number
+---@return boolean valid finite positive number
+local function validMoneyAmount(amount)
+    return type(amount) == 'number' and amount == amount and amount ~= math.huge and amount ~= -math.huge and amount > 0 and amount < 1e12
+end
+
+---Server-validated money add. Never trusts client-supplied amounts.
+---@param self Player
+---@param moneytype 'cash'|'bank'
+---@param amount number
+---@return boolean ok
+function PlayerMethods:AddMoney(moneytype, amount)
+    if moneytype ~= 'cash' and moneytype ~= 'bank' then return false end
+    if not validMoneyAmount(amount) then return false end
+    amount = math.floor(amount)
+    self.data[moneytype] = (self.data[moneytype] or 0) + amount
+    self.dirty[moneytype] = true
+    TriggerClientEvent('aicore:client:onPlayerData', self.source, moneytype, self.data[moneytype])
+    TriggerEvent('aicore:server:onMoneyChange', self.source, moneytype, amount, self.data[moneytype])
+    return true
+end
+
+---@param self Player
+---@param moneytype 'cash'|'bank'
+---@param amount number
+---@return boolean ok false when insufficient funds or invalid
+function PlayerMethods:RemoveMoney(moneytype, amount)
+    if moneytype ~= 'cash' and moneytype ~= 'bank' then return false end
+    if not validMoneyAmount(amount) then return false end
+    amount = math.floor(amount)
+    if (self.data[moneytype] or 0) < amount then return false end
+    self.data[moneytype] = self.data[moneytype] - amount
+    self.dirty[moneytype] = true
+    TriggerClientEvent('aicore:client:onPlayerData', self.source, moneytype, self.data[moneytype])
+    TriggerEvent('aicore:server:onMoneyChange', self.source, moneytype, -amount, self.data[moneytype])
+    return true
+end
+
+---@param self Player
+---@param moneytype 'cash'|'bank'
+---@return number
+function PlayerMethods:GetMoney(moneytype)
+    return self.data[moneytype] or 0
+end
+
+---Vitals are time-derived: base values + timestamp, decay applied on read.
+---Nothing is ticked in the database.
+---@param self Player
+---@return {hunger:number, thirst:number, stress:number}
+function PlayerMethods:GetVitals()
+    local v = self.data.vitals
+    local elapsedMinutes = math.max(0, (os.time() - (v.updatedAt or os.time())) / 60)
+    return {
+        hunger = math.max(0, (v.hunger or 100) - elapsedMinutes * Config.vitals.hungerRate),
+        thirst = math.max(0, (v.thirst or 100) - elapsedMinutes * Config.vitals.thirstRate),
+        stress = v.stress or 0,
+    }
+end
+
+---@param self Player
+---@param hunger? number
+---@param thirst? number
+---@param stress? number
+function PlayerMethods:SetVitals(hunger, thirst, stress)
+    local current = self:GetVitals()
+    self.data.vitals = {
+        hunger = hunger ~= nil and math.min(100, math.max(0, hunger)) or current.hunger,
+        thirst = thirst ~= nil and math.min(100, math.max(0, thirst)) or current.thirst,
+        stress = stress ~= nil and math.min(100, math.max(0, stress)) or current.stress,
+        updatedAt = os.time(),
+    }
+    self.dirty['vitals'] = true
+end
+
 local PlayerMt = { __index = PlayerMethods }
 
 ---@param source Source

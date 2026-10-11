@@ -24,6 +24,11 @@ server_scripts {
     'server/main.lua',
     'server/storage.lua',
     'server/player.lua',
+    'server/groups.lua',
+    'server/character.lua',
+    'server/functions.lua',
+    'server/commands.lua',
+    'server/events.lua',
     'server/loops.lua',
 }
 

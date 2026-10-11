@@ -25,3 +25,34 @@ AddStateBagChangeHandler('vitals', 'player:' .. GetPlayerServerId(PlayerId()),
         TriggerEvent('aicore:vitalsChanged', value)
     end
 )
+
+-- Spawn flow: the server drives login, then tells the client where to appear.
+-- No spawn manager dependency; plain fade + teleport.
+RegisterNetEvent('aicore:client:onPlayerLoaded', function(data)
+    DoScreenFadeOut(500)
+    while not IsScreenFadedOut() do Wait(100) end
+
+    local pos = data.position or Config.defaultSpawn
+    local ped = PlayerPedId()
+    SetEntityCoords(ped, pos.x, pos.y, pos.z, false, false, false, false)
+    SetEntityHeading(ped, pos.w or 0.0)
+    FreezeEntityPosition(ped, false)
+
+    -- Let the world stream in before revealing.
+    Wait(500)
+    DoScreenFadeIn(500)
+
+    TriggerEvent('aicore:playerSpawned', data)
+end)
+
+-- Once the session is up, ask the server to log us in (which fires onPlayerLoaded).
+CreateThread(function()
+    while not NetworkIsSessionStarted() do Wait(500) end
+    Wait(1000)
+    TriggerServerEvent('aicore:server:requestSpawn')
+end)
+
+-- Notification relay for AICore.Notify.
+RegisterNetEvent('aicore:client:notify', function(message, notifyType)
+    lib.notify({ description = message, type = notifyType or 'info' })
+end)
