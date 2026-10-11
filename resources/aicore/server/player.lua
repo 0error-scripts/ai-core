@@ -111,6 +111,22 @@ function PlayerMethods:GetMoney(moneytype)
     return self.data[moneytype] or 0
 end
 
+---Server-validated money set (QB SetMoney compat). Clamped, never trusts input blindly.
+---@param self Player
+---@param moneytype 'cash'|'bank'
+---@param amount number
+---@return boolean ok
+function PlayerMethods:SetMoney(moneytype, amount)
+    if moneytype ~= 'cash' and moneytype ~= 'bank' then return false end
+    if type(amount) ~= 'number' or amount ~= amount then return false end
+    amount = math.floor(math.max(0, math.min(amount, 1e12)))
+    self.data[moneytype] = amount
+    self.dirty[moneytype] = true
+    TriggerClientEvent('aicore:client:onPlayerData', self.source, moneytype, amount)
+    TriggerEvent('aicore:server:onMoneyChange', self.source, moneytype, amount, amount)
+    return true
+end
+
 ---Vitals are time-derived: base values + timestamp, decay applied on read.
 ---Nothing is ticked in the database.
 ---@param self Player

@@ -131,6 +131,21 @@ AddEventHandler('aicore:server:onPlayerUnload', function(source)
     TriggerClientEvent('QBCore:Client:OnPlayerUnload', source)
 end)
 
+AddEventHandler('aicore:server:onJobUpdate', function(source)
+    local player = exports.aicore:GetPlayer(source)
+    if player then
+        TriggerClientEvent('QBCore:Client:OnJobUpdate', source, player.PlayerData.job)
+    end
+end)
+
+-- Duty toggle from QB-style scripts.
+RegisterNetEvent('QBCore:ToggleDuty', function()
+    local source = source --[[@as number]]
+    local player = exports.aicore:GetPlayer(source)
+    if not player then return end
+    exports.aicore:SetDuty(source, not player.PlayerData.job.onduty)
+end)
+
 exports('GetCoreObject', function()
     return QBCore
 end)

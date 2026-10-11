@@ -43,6 +43,7 @@ function AICore.Login(source, citizenid)
     })
 
     AICore.RegisterPlayer(source, player)
+    AICore.AttachCompatShape(player, entity.name or citizenid)
     Player(source).state:set('isLoggedIn', true, true)
 
     TriggerClientEvent('aicore:client:onPlayerLoaded', source, {

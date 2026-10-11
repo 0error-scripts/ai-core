@@ -3,12 +3,13 @@
 ---server-validated and dirty-tracked like everything else.
 
 ---@class JobGrade {name:string, payment:integer}
----@class JobDef {label:string, grades:table<integer, JobGrade>}
+---@class JobDef {label:string, type?:string, grades:table<integer, JobGrade>}
 
 ---@type table<string, JobDef>
 AICore.Jobs = {
     unemployed = {
         label = 'Unemployed',
+        type = 'none',
         grades = { [0] = { name = 'Freeloader', payment = 10 } },
     },
 }
@@ -43,7 +44,9 @@ function AICore.SetPlayerJob(source, jobName, grade)
     if not player or not def then return false end
     grade = math.tointeger(grade) or 0
     if not def.grades[grade] then return false end
-    player:Set('job', { name = jobName, grade = grade })
+    -- Preserve duty state across job/grade changes.
+    local onduty = player.data.job and player.data.job.onduty or false
+    player:Set('job', { name = jobName, grade = grade, onduty = onduty })
     TriggerEvent('aicore:server:onJobUpdate', source, player.data.job)
     TriggerClientEvent('aicore:client:onJobUpdate', source, player.data.job)
     return true
