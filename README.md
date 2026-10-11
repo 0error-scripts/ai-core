@@ -49,4 +49,4 @@ Issues and PRs are welcome once the core systems land. Please read [`docs/PERFOR
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+GPL-3.0 — see [LICENSE](LICENSE). If you distribute Aicore or a modified version, you must do so under the same license with source included.

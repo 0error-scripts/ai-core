@@ -1,4 +1,4 @@
----Aicore multicharacter selection UI (MIT-clean, built from scratch).
+---Aicore multicharacter selection UI, built from scratch for Aicore.
 ---ox_lib menus + a preview camera while choosing. No per-frame loops:
 ---everything is event-driven.
 ---Enable with Config.characters.useMultichar. When disabled, the core falls
