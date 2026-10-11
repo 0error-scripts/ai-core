@@ -1,0 +1,33 @@
+# Aicore example server.cfg — copy and edit for your server.
+
+# --- Network / identity ---
+endpoint_add_tcp "0.0.0.0:30120"
+endpoint_add_udp "0.0.0.0:30120"
+sv_hostname "Aicore RP"
+sv_maxclients 64
+sv_projectName "Aicore"
+sv_projectDesc "Powered by Aicore — the performance-first FiveM core."
+
+# --- OneSync (required) ---
+set onesync on
+
+# --- State bags: clients must never write state (Aicore expects this) ---
+setr sv_stateBagStrictMode true
+
+# --- Database (oxmysql) ---
+set mysql_connection_string "mysql://aicore:change-me@localhost/aicore?charset=utf8mb4"
+# Optional pool tuning:
+# set mysql_pool_size 10
+
+# --- Admin access for aicore.* commands ---
+add_ace group.admin aicore.admin allow
+# Example: give yourself admin (replace with your own identifier):
+# add_principal identifier.steam:110000112345678 group.admin
+
+# --- Resources ---
+ensure ox_lib
+ensure oxmysql
+ensure aicore
+# ensure aicore_bridge  # optional: lets QBox/QBCore scripts run on Aicore
+
+# --- Your gameplay resources below ---

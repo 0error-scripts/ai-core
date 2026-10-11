@@ -34,12 +34,13 @@ Full details: [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md)
 
 ## Install
 
-Not yet — wait for `v1.0`. When it's ready:
+See [`docs/INSTALL.md`](docs/INSTALL.md) and `server.cfg.example`. When it's ready:
 
 ```cfg
 ensure ox_lib
 ensure oxmysql
 ensure aicore
+# ensure aicore_bridge  # optional: run QBox/QBCore scripts on Aicore
 ```
 
 ## Contributing

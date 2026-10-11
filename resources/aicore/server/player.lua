@@ -161,3 +161,18 @@ function AICore.CreatePlayer(source, citizenid, userId, identifiers, data)
 end
 
 exports('CreatePlayer', AICore.CreatePlayer)
+
+---Force a partial save for one player. Used by the compatibility bridge.
+---@param source Source
+---@return boolean saved
+function AICore.SavePlayer(source)
+    local player = AICore.GetPlayer(source)
+    if not player or not player:IsDirty() then return false end
+    local Storage = require 'server.storage'
+    local ok, err = pcall(Storage.savePartial, player.citizenid, player.dirty, player.data)
+    if ok then player:MarkClean() end
+    if not ok then lib.print.error(('SavePlayer failed for %s: %s'):format(player.citizenid, err)) end
+    return ok
+end
+
+exports('SavePlayer', AICore.SavePlayer)
