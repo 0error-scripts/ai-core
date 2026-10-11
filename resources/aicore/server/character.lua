@@ -16,6 +16,12 @@ local function primaryLicense(identifiers)
 end
 
 ---@param source Source
+---@return string license
+function AICore.GetPlayerLicense(source)
+    return primaryLicense(GetPlayerIdentifiers(source))
+end
+
+---@param source Source
 ---@param citizenid string
 ---@return boolean ok
 ---@return string? err
@@ -97,3 +103,30 @@ exports('Login', AICore.Login)
 exports('Logout', AICore.Logout)
 exports('CreateCharacter', AICore.CreateCharacter)
 exports('DeleteCharacter', AICore.DeleteCharacter)
+
+---Multichar select flow: client picked a character from the menu.
+---Ownership is verified server-side before login.
+RegisterNetEvent('aicore:server:selectCharacter', function(citizenid)
+    local source = source --[[@as Source]]
+    if AICore.GetPlayer(source) then return end
+    if type(citizenid) ~= 'string' then return end
+
+    local owner = MySQL.scalar.await('SELECT `license` FROM `players` WHERE `citizenid` = ? LIMIT 1', { citizenid })
+    if owner ~= AICore.GetPlayerLicense(source) then
+        lib.print.warn(('selectCharacter: license mismatch for source %s'):format(source))
+        return
+    end
+
+    local ok, err = AICore.Login(source, citizenid)
+    if not ok then
+        DropPlayer(source, ('Aicore: login failed (%s).'):format(err or 'unknown'))
+    end
+end)
+
+---Multichar delete flow: verify ownership, delete, tell the client to refresh.
+RegisterNetEvent('aicore:server:deleteCharacter', function(citizenid)
+    local source = source --[[@as Source]]
+    if type(citizenid) ~= 'string' then return end
+    local ok = AICore.DeleteCharacter(source, citizenid)
+    TriggerClientEvent('aicore:client:characterDeleted', source, ok)
+end)

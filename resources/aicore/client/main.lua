@@ -46,7 +46,9 @@ RegisterNetEvent('aicore:client:onPlayerLoaded', function(data)
 end)
 
 -- Once the session is up, ask the server to log us in (which fires onPlayerLoaded).
+-- Skipped when the multichar UI is enabled — client/character.lua owns the flow.
 CreateThread(function()
+    if Config.characters.useMultichar then return end
     while not NetworkIsSessionStarted() do Wait(500) end
     Wait(1000)
     TriggerServerEvent('aicore:server:requestSpawn')

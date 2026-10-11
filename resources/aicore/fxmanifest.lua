@@ -17,6 +17,7 @@ shared_scripts {
 
 client_scripts {
     'client/main.lua',
+    'client/character.lua',
 }
 
 server_scripts {

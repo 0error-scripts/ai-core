@@ -35,3 +35,13 @@ Config.paycheck = {
     enabled = true,
     intervalMinutes = 30,
 }
+
+-- Character selection.
+Config.characters = {
+    -- true: ox_lib multichar menu + preview camera (client/character.lua).
+    -- false: instant auto-login, first character is used/created.
+    useMultichar = true,
+    maxCharacters = 5,
+    -- Where players wait while picking a character.
+    previewLocation = vec4(-1035.0, -2739.0, 20.0, 0.0),
+}
