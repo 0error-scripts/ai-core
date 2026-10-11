@@ -47,6 +47,15 @@ ensure aicore
 
 Issues and PRs are welcome once the core systems land. Please read [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md) first — every contribution must respect the perf budget.
 
+## 💬 Join Our Community / Support Aicore
+
+Aicore is built in the open, and it's better with you in it. Whether you need help setting
+things up, found a bug, want to share feedback, or would like to contribute — come say hi:
+
+👉 **[Join our Discord](https://discord.gg/xfQFcWjak)**
+
+Every member, tester, and contributor helps keep Aicore fast and free. Thanks for supporting us!
+
 ## License
 
 GPL-3.0 — see [LICENSE](LICENSE). If you distribute Aicore or a modified version, you must do so under the same license with source included.
