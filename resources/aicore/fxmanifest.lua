@@ -4,7 +4,7 @@ game 'gta5'
 name 'aicore'
 description 'Aicore - the performance-first FiveM server core'
 author 'Aicore Contributors'
-repository 'https://github.com/aicore-fivem/aicore'
+repository 'https://github.com/0error-scripts/ai-core'
 version '0.1.0'
 
 lua54 'yes'
