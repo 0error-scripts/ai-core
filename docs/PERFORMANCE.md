@@ -33,8 +33,16 @@ Aicore treats that line as a hard ceiling, not a target.
 6. **One system per job** — the core stays thin and defers to `ox_lib`,
    `ox_inventory`, `ox_target` instead of reimplementing them.
 
-## Benchmark harness (planned)
+## Benchmark harness (live: synthetic I/O, plus planned server-profiler runs)
 
-- Baseline: QBox v1.24.0 on identical hardware/scripts.
-- Metrics: idle resmon, join latency, 100-player save burst, tick p99.
-- Results published per release in `docs/benchmarks/`.
+- Synthetic I/O harness in [`bench/`](../bench/RESULTS.md) — executes the real
+  `player.lua`/`storage.lua` code paths (dirty tracking, differential client
+  sync, `savePartial`) under stubbed FiveM globals, against a QBox behavior
+  model built from [`docs/AUDIT-qbox.md`](AUDIT-qbox.md).
+- Latest run (128 players): 95.6–97.8% less DB write I/O than the QBox profile
+  on vitals-tick and save-burst workloads. The QBox side is **modeled**, not
+  executed QBox code — `bench/RESULTS.md` states exactly what's real vs
+  modeled and where the numbers are safe to use.
+- Live-server measurement (`resmon 1` + built-in server profiler, QBox v1.24.0
+  baseline on identical hardware) is still planned per release; results will
+  publish in `docs/benchmarks/`.
